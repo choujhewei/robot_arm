@@ -1,0 +1,1 @@
+../Core/Src/motor_control.cpp:12:6:void SendMotorCommand(float*)	24	static
