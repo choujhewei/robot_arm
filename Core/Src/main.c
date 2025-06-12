@@ -122,22 +122,33 @@ int main(void)
   LL_TIM_ClearFlag_UPDATE(TIM1);
   LL_TIM_EnableIT_UPDATE(TIM1);
   LL_TIM_EnableCounter(TIM1);
-//  uart4_dma_tx_start();
+  uart4_dma_tx_start();
   usart6_dma_tx_start();
   printf("start\r\n");
   LL_mDelay(100);
   UART4_DMA_Config();
   USART6_DMA_Config();
-  uint8_t ID_list[1] = { 1 };
+  uint8_t ID_list[2] = { 1, 2 };
 //  SyncWrite_StatusReturnLevel(1, ID_list, 1);
 //  LL_mDelay(10);
 //  PING();
 //  SyncWrite_DisableDynamixels(1, ID_list);
 //
-//  for(int id = 3; id < 9; id++) {
-//	  TorqueEnable(1, 0);
-//      LL_mDelay(1);
-//      }
+  uint8_t test_data[] = {
+    0x01, 0x06, 0x00,  // ID, Length低, 高
+    0x03,              // Instruction
+    0x40, 0x00,        // Address
+    0x01               // Data
+  };
+
+  // 計算CRC
+  uint16_t crc = update_crc( test_data, 7); // 7字節（01 06 00 03 40 00 01）
+  printf("Expected CRC: 0x194E, Actual: 0x%04X\n", crc);  // 應輸出0x194E
+
+  for(int id = 1; id < 2; id++) {
+	  TorqueEnable(id,1);
+      LL_mDelay(1);
+      }
 //
 //  for(int id = 3; id < 9; id++) {
 //      OperatingMode(1, POSITION);
@@ -154,9 +165,9 @@ int main(void)
 //  PING(1);
 
 	while(1){
-		SyncLED_Enable(1, ID_list);
+		SyncLED_Enable(2, ID_list);
 		LL_mDelay(100);
-		SyncLED_Disable(1, ID_list);
+		SyncLED_Disable(2, ID_list);
 		LL_mDelay(100);
 //		for(a=110; a>=20;a-=90){
 //			PositionWithVelocity(3,a/0.088,100);

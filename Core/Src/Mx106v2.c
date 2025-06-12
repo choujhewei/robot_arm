@@ -347,22 +347,24 @@ uint8_t TorqueEnable(uint8_t ID, _Bool Status) {
 	Instruction_Packet_Array[9] = 0x00;
 	Instruction_Packet_Array[10] = Status;
 
-	crc = update_crc(Instruction_Packet_Array, Instruction_Packet_Array[5] + 5);
+	uint16_t length = (Instruction_Packet_Array[6] << 8) | Instruction_Packet_Array[5]; // 合成完整長度
+	uint16_t crc_length = length + 3 ;
+	crc = update_crc(&Instruction_Packet_Array[4], crc_length);
 
-	Instruction_Packet_Array[11] = crc & 0x00FF;
-	Instruction_Packet_Array[12] = (crc >> 8) & 0x00FF;
+	Instruction_Packet_Array[11] = (uint8_t)(crc & 0x00FF);
+	Instruction_Packet_Array[12] = (uint8_t)((crc >> 8) & 0x00FF);
 
 	Status_packet_length = 7; // ID(1) + LEN(2) + INS(1) + ERR(1) + CRC(2)
 
 	if(ID == 0XFE || Status_Return_Level != ALL) {
 		Packet_Return = 0;
-		transmitInstructionPacket6();
+		transmitInstructionPacket4();
 		return (0x00);
 	}
 	else {
 		Packet_Return = 1;
-		transmitInstructionPacket6();
-		readStatusPacket6();
+		transmitInstructionPacket4();
+		readStatusPacket4();
 		if(Status_Packet_Array[8] == 0)
 			return (0x00);
 		else
@@ -942,7 +944,7 @@ void SyncLED_Disable(uint8_t n, uint8_t *ID_list) {
 	Instruction_Packet_Array[2 * n + 13] = (crc >> 8) & 0x00FF;
 
 	Packet_Return = 0;
-	transmitInstructionPacket6();
+	transmitInstructionPacket4();
 }
 
 void SyncLED_Enable(uint8_t n, uint8_t *ID_list) {
@@ -966,7 +968,7 @@ void SyncLED_Enable(uint8_t n, uint8_t *ID_list) {
 	Instruction_Packet_Array[2 * n + 13] = (crc >> 8) & 0x00FF;
 
 	Packet_Return = 0;
-	transmitInstructionPacket6();
+	transmitInstructionPacket4();
 }
 
 // =============================    For robot    ==========================
