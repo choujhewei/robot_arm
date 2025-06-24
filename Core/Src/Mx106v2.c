@@ -157,13 +157,13 @@ void debugStatusframe(void) {
 void transmitInstructionPacket4(void) {  // Transmit instruction packet to Dynamixel
 	dynamixel_Ready = 0;
 	 // 1. Disable DMA Stream (先停)
-	 LL_DMA_DisableStream(DMA1, LL_DMA_STREAM_4);
+//	 LL_DMA_DisableStream(DMA1, LL_DMA_STREAM_4);
 	 // 2. 設置 DMA memory 與 data length
-	 LL_DMA_SetMemoryAddress(DMA1, LL_DMA_STREAM_4, (uint32_t)Instruction_Packet_Array);
-	 LL_DMA_SetDataLength(DMA1, LL_DMA_STREAM_4, Instruction_Packet_Array[5] + 7);
+//	 LL_DMA_SetMemoryAddress(DMA1, LL_DMA_STREAM_4, (uint32_t)Instruction_Packet_Array);
+//	 LL_DMA_SetDataLength(DMA1, LL_DMA_STREAM_4, Instruction_Packet_Array[5] + 7);
 	 // 3. Enable DMA Stream again
-	 LL_DMA_EnableStream(DMA1, LL_DMA_STREAM_4);
-	 LL_USART_EnableDMAReq_TX(UART4);  // 確保 USART TX DMA 也啟用
+//	 LL_DMA_EnableStream(DMA1, LL_DMA_STREAM_4);
+//	 LL_USART_EnableDMAReq_TX(UART4);  // 確保 USART TX DMA 也啟用
 	#if USE_THREE_STATE_GATE == 1
 		LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_4);
 		printf("1\r\n");
@@ -282,7 +282,7 @@ uint8_t OperatingMode(uint8_t ID, uint8_t OPERATION_MODE) {
 
 	if(ID == 0XFE || Status_Return_Level != ALL) {
 		Packet_Return = 0;
-		transmitInstructionPacket6();
+		transmitInstructionPacket4();
 		return (0x00);
 	}
 	else {
@@ -347,12 +347,10 @@ uint8_t TorqueEnable(uint8_t ID, _Bool Status) {
 	Instruction_Packet_Array[9] = 0x00;
 	Instruction_Packet_Array[10] = Status;
 
-	uint16_t length = (Instruction_Packet_Array[6] << 8) | Instruction_Packet_Array[5]; // 合成完整長度
-	uint16_t crc_length = length + 3 ;
-	crc = update_crc(&Instruction_Packet_Array[4], crc_length);
+	crc = update_crc(Instruction_Packet_Array, Instruction_Packet_Array[5] + 5);
 
-	Instruction_Packet_Array[11] = (uint8_t)(crc & 0x00FF);
-	Instruction_Packet_Array[12] = (uint8_t)((crc >> 8) & 0x00FF);
+	Instruction_Packet_Array[11] = crc & 0x00FF;
+	Instruction_Packet_Array[12] = (crc >> 8) & 0x00FF;
 
 	Status_packet_length = 7; // ID(1) + LEN(2) + INS(1) + ERR(1) + CRC(2)
 
@@ -364,7 +362,7 @@ uint8_t TorqueEnable(uint8_t ID, _Bool Status) {
 	else {
 		Packet_Return = 1;
 		transmitInstructionPacket4();
-		readStatusPacket4();
+//		readStatusPacket4();
 		if(Status_Packet_Array[8] == 0)
 			return (0x00);
 		else
@@ -692,12 +690,12 @@ void PING(uint8_t id){
 		Packet_Return = 2;
 		Is_dynamixel_GetData = 0;
 		for (uint16_t i =0;i<15;i++ ){
-			LL_USART_TransmitData8(USART6,Instruction_Packet_Array[i]);
-			while(!LL_USART_IsActiveFlag_TC(USART6));
+			LL_USART_TransmitData8(UART4,Instruction_Packet_Array[i]);
+			while(!LL_USART_IsActiveFlag_TC(UART4));
 		}
 
-		readStatusPacket6();
-		transmitInstructionPacket6();
+		readStatusPacket4();
+		transmitInstructionPacket4();
 
 }
 void SyncRead_Position(uint8_t n, uint8_t *ID_list) {
@@ -799,7 +797,7 @@ void SyncWrite_StatusReturnLevel(uint8_t n, uint8_t *ID_list, uint8_t level) {
 
 	Status_Return_Level = level;
 	Packet_Return = 0;
-	transmitInstructionPacket6();
+	transmitInstructionPacket4();
 }
 
 void SyncWrite_Velocity(uint8_t n, uint8_t *ID_list, int32_t *cmd) {

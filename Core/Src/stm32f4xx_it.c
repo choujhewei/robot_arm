@@ -313,17 +313,19 @@ void UART4_IRQHandler(void)
 	printf("uart4 it\r\n");
 	LL_mDelay(100);
 	if(LL_USART_IsActiveFlag_TC(UART4) == 1) {
-		    printf("TX complete, switching to RX mode\r\n");
-		    LL_USART_ClearFlag_TC(UART4);
+		printf("TX complete, switching to RX mode\r\n");
+		LL_USART_ClearFlag_TC(UART4);
+		LL_USART_DisableIT_TC(UART4);  // 避免反覆進中斷
 	#if USE_THREE_STATE_GATE == 1
-			LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_4);
+		LL_mDelay(1);  // 多數 buffer 切換需要時間
+		LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_4);
 	#else
-			LL_USART_SetTransferDirection(UART4, LL_USART_DIRECTION_RX); //change UART direction
+	    LL_USART_SetTransferDirection(UART4, LL_USART_DIRECTION_RX); //change UART direction
 	#endif
-				if(Packet_Return == 0) {
-					dynamixel_Ready = 1;
-					return;
-				}
+		if(Packet_Return == 0) {
+			dynamixel_Ready = 1;
+			return;
+		}
 //				else if(Packet_Return == 1) {
 //					dynamixel_Ready = 2;
 //					return;

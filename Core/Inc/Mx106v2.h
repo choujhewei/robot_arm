@@ -58,7 +58,7 @@ extern "C" {
 #define RAM_TORQUE_ENABLE               0x40
 #define RAM_LED                         0x41
 
-#define RAM_STATUS_RETURN_LEVEL         0x44
+#define RAM_STATUS_RETURN_LEVEL         0x5E
 
 #define RAM_VELOCITY_I_GAIN_L           0x4C
 #define RAM_VELOCITY_I_GAIN_H           0x4D

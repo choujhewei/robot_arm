@@ -23,9 +23,11 @@
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_tim.h:1116:22:LL_TIM_EnableCounter	1
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_tim.h:3185:22:LL_TIM_ClearFlag_UPDATE	1
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_tim.h:3460:22:LL_TIM_EnableIT_UPDATE	1
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:410:22:LL_USART_Enable	1
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:1814:26:LL_USART_IsActiveFlag_TXE	1
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:2426:22:LL_USART_TransmitData8	1
-../Core/Src/main.c:85:5:main	2
-../Core/Src/main.c:264:6:SystemClock_Config	6
-../Core/Src/main.c:307:5:_write	3
-../Core/Src/main.c:322:6:Error_Handler	1
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_gpio.h:881:22:LL_GPIO_SetOutputPin	1
+../Core/Src/main.c:85:5:main	1
+../Core/Src/main.c:258:6:SystemClock_Config	6
+../Core/Src/main.c:301:5:_write	3
+../Core/Src/main.c:316:6:Error_Handler	1

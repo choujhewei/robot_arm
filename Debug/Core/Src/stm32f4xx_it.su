@@ -27,6 +27,7 @@
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_tim.h:3196:26:LL_TIM_IsActiveFlag_UPDATE	16	static
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:1803:26:LL_USART_IsActiveFlag_TC	16	static
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:1968:22:LL_USART_ClearFlag_TC	16	static
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:2142:22:LL_USART_DisableIT_TC	40	static,ignoring_inline_asm
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:2316:22:LL_USART_EnableDMAReq_RX	40	static,ignoring_inline_asm
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:2349:22:LL_USART_EnableDMAReq_TX	40	static,ignoring_inline_asm
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:2360:22:LL_USART_DisableDMAReq_TX	40	static,ignoring_inline_asm
@@ -47,10 +48,10 @@
 ../Core/Src/stm32f4xx_it.c:276:6:DMA1_Stream6_IRQHandler	8	static
 ../Core/Src/stm32f4xx_it.c:293:6:TIM1_UP_TIM10_IRQHandler	8	static
 ../Core/Src/stm32f4xx_it.c:310:6:UART4_IRQHandler	8	static
-../Core/Src/stm32f4xx_it.c:349:6:DMA2_Stream1_IRQHandler	8	static
-../Core/Src/stm32f4xx_it.c:376:6:DMA2_Stream6_IRQHandler	8	static
-../Core/Src/stm32f4xx_it.c:396:6:USART6_IRQHandler	8	static
-../Core/Src/stm32f4xx_it.c:421:6:uart4_dma_tx_start	8	static
-../Core/Src/stm32f4xx_it.c:439:6:uart4_dma_rx_start	8	static
-../Core/Src/stm32f4xx_it.c:456:6:usart6_dma_tx_start	8	static
-../Core/Src/stm32f4xx_it.c:474:6:usart6_dma_rx_start	8	static
+../Core/Src/stm32f4xx_it.c:351:6:DMA2_Stream1_IRQHandler	8	static
+../Core/Src/stm32f4xx_it.c:378:6:DMA2_Stream6_IRQHandler	8	static
+../Core/Src/stm32f4xx_it.c:398:6:USART6_IRQHandler	8	static
+../Core/Src/stm32f4xx_it.c:423:6:uart4_dma_tx_start	8	static
+../Core/Src/stm32f4xx_it.c:441:6:uart4_dma_rx_start	8	static
+../Core/Src/stm32f4xx_it.c:458:6:usart6_dma_tx_start	8	static
+../Core/Src/stm32f4xx_it.c:476:6:usart6_dma_rx_start	8	static

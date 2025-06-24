@@ -53,18 +53,18 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-bool start_trans_mx = 0;
+_Bool start_trans_mx = 0;
 
 // Geometric parameters
-float a = 110;
-float b = 160;
-float c = 200;
-float d = 180;
-float e = 300;
-float f = 180;
-int32_t In[6] = {110, 160, 200, 180, 300, 180};
-int32_t An[2] = {100,200};
-int32_t vel[6] = {100};
+//float a = 110;
+//float b = 160;
+//float c = 200;
+//float d = 180;
+//float e = 300;
+//float f = 180;
+//int32_t In[6] = {110, 160, 200, 180, 300, 180};
+//int32_t An[2] = {100,200};
+//int32_t vel[6] = {100};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -114,42 +114,36 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
+  MX_USART2_UART_Init();
+  MX_TIM1_Init();
   MX_UART4_Init();
   MX_USART6_UART_Init();
-  MX_TIM1_Init();
-  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   LL_TIM_ClearFlag_UPDATE(TIM1);
   LL_TIM_EnableIT_UPDATE(TIM1);
   LL_TIM_EnableCounter(TIM1);
+  LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_4);
+  LL_mDelay(1); // ★ 加入延遲穩定方向切換（必要！）
   uart4_dma_tx_start();
   usart6_dma_tx_start();
   printf("start\r\n");
   LL_mDelay(100);
   UART4_DMA_Config();
   USART6_DMA_Config();
+  LL_USART_Enable(UART4);
+  LL_USART_Enable(USART6);
   uint8_t ID_list[2] = { 1, 2 };
-//  SyncWrite_StatusReturnLevel(1, ID_list, 1);
-//  LL_mDelay(10);
-//  PING();
-//  SyncWrite_DisableDynamixels(1, ID_list);
-//
-  uint8_t test_data[] = {
-    0x01, 0x06, 0x00,  // ID, Length低, 高
-    0x03,              // Instruction
-    0x40, 0x00,        // Address
-    0x01               // Data
-  };
+  SyncWrite_StatusReturnLevel(2, ID_list, 1);
+  LL_mDelay(10);
+//  PING(1);
+  SyncWrite_DisableDynamixels(1, ID_list);
 
-  // 計算CRC
-  uint16_t crc = update_crc( test_data, 7); // 7字節（01 06 00 03 40 00 01）
-  printf("Expected CRC: 0x194E, Actual: 0x%04X\n", crc);  // 應輸出0x194E
+//  for(int id = 1; id < 2; id++) {
+//	  TorqueEnable(id,1);
+//	  while (dynamixel_Ready != 1);
+//      LL_mDelay(1);
+//  }
 
-  for(int id = 1; id < 2; id++) {
-	  TorqueEnable(id,1);
-      LL_mDelay(1);
-      }
-//
 //  for(int id = 3; id < 9; id++) {
 //      OperatingMode(1, POSITION);
 //      LL_mDelay(1);
@@ -160,8 +154,8 @@ int main(void)
 //      LL_mDelay(1);
 //      }
 //
-//  SyncWrite_EnableDynamixels(1, ID_list);
-//  LL_mDelay(1);
+  SyncWrite_EnableDynamixels(1, ID_list);
+  LL_mDelay(1);
 //  PING(1);
 
 	while(1){
