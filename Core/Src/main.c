@@ -56,7 +56,7 @@
 _Bool start_trans_mx = 0;
 
 // Geometric parameters
-//float a = 110;
+float a = 110;
 //float b = 160;
 //float c = 200;
 //float d = 180;
@@ -136,25 +136,25 @@ int main(void)
   SyncWrite_StatusReturnLevel(2, ID_list, 1);
   LL_mDelay(10);
 //  PING(1);
-  SyncWrite_DisableDynamixels(1, ID_list);
+  SyncWrite_DisableDynamixels(2, ID_list);
 
-//  for(int id = 1; id < 2; id++) {
-//	  TorqueEnable(id,1);
-//	  while (dynamixel_Ready != 1);
-//      LL_mDelay(1);
-//  }
+  for(int id = 1; id <= 2; id++) {
+	  TorqueEnable(id,1);
+	  while (dynamixel_Ready != 1);
+      LL_mDelay(1);
+  }
 
-//  for(int id = 3; id < 9; id++) {
-//      OperatingMode(1, POSITION);
-//      LL_mDelay(1);
-//      }
+  for(int id = 1; id <= 2; id++) {
+      OperatingMode(id, POSITION);
+      LL_mDelay(1);
+      }
 //
 //  for(int id = 3; id < 9; id++) {
 //      TorqueEnable(1, 1);
 //      LL_mDelay(1);
 //      }
 //
-  SyncWrite_EnableDynamixels(1, ID_list);
+  SyncWrite_EnableDynamixels(2, ID_list);
   LL_mDelay(1);
 //  PING(1);
 
@@ -163,10 +163,10 @@ int main(void)
 		LL_mDelay(100);
 		SyncLED_Disable(2, ID_list);
 		LL_mDelay(100);
-//		for(a=110; a>=20;a-=90){
-//			PositionWithVelocity(3,a/0.088,100);
-//			LL_mDelay(1000);
-//				}
+		for(a=110; a>=20;a-=90){
+			PositionWithVelocity(1,a/0.088,100);
+			LL_mDelay(1000);
+				}
 //		for(b=160; b<=240;b+=80){
 //			PositionWithVelocity(4,b/0.088,100);
 //			LL_mDelay(1000);
@@ -228,8 +228,8 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+//  while (1)
+//  {
 //	  	if(start_trans_mx == 1) {
 ////	  		LL_mDelay(1000);
 //	  		start_trans_mx = 0;
@@ -247,7 +247,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
+//  }
   /* USER CODE END 3 */
 }
 

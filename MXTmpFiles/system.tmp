@@ -1,7 +1,0 @@
-#tLL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
-#tLL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
-#n
-#t/* System interrupt init*/
-#tNVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_0);#n
-#n
-#n

@@ -156,14 +156,14 @@ void debugStatusframe(void) {
 
 void transmitInstructionPacket4(void) {  // Transmit instruction packet to Dynamixel
 	dynamixel_Ready = 0;
-	 // 1. Disable DMA Stream (先停)
-//	 LL_DMA_DisableStream(DMA1, LL_DMA_STREAM_4);
-	 // 2. 設置 DMA memory 與 data length
-//	 LL_DMA_SetMemoryAddress(DMA1, LL_DMA_STREAM_4, (uint32_t)Instruction_Packet_Array);
-//	 LL_DMA_SetDataLength(DMA1, LL_DMA_STREAM_4, Instruction_Packet_Array[5] + 7);
-	 // 3. Enable DMA Stream again
-//	 LL_DMA_EnableStream(DMA1, LL_DMA_STREAM_4);
-//	 LL_USART_EnableDMAReq_TX(UART4);  // 確保 USART TX DMA 也啟用
+//	  1. Disable DMA Stream (先停)
+	 LL_DMA_DisableStream(DMA1, LL_DMA_STREAM_4);
+//	  2. 設置 DMA memory 與 data length
+	 LL_DMA_SetMemoryAddress(DMA1, LL_DMA_STREAM_4, (uint32_t)Instruction_Packet_Array);
+	 LL_DMA_SetDataLength(DMA1, LL_DMA_STREAM_4, Instruction_Packet_Array[5] + 7);
+//	  3. Enable DMA Stream again
+	 LL_DMA_EnableStream(DMA1, LL_DMA_STREAM_4);
+	 LL_USART_EnableDMAReq_TX(UART4);  // 確保 USART TX DMA 也啟用
 	#if USE_THREE_STATE_GATE == 1
 		LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_4);
 		printf("1\r\n");
@@ -555,13 +555,13 @@ uint8_t PositionWithVelocity(uint8_t ID, int32_t Position, int32_t Moving_Veloci
 
 	if(ID == 0XFE || Status_Return_Level != ALL) {
 		Packet_Return = 0;
-		transmitInstructionPacket6();
+		transmitInstructionPacket4();
 		return (0x00);
 	}
 	else {
 		Packet_Return = 1;
-		transmitInstructionPacket6();
-		readStatusPacket6();
+		transmitInstructionPacket4();
+//		readStatusPacket4();
 		if(Status_Packet_Array[8] == 0)
 			return (0x00);
 		else
@@ -747,7 +747,7 @@ void SyncWrite_DisableDynamixels(uint8_t n, uint8_t *ID_list) {
 	Instruction_Packet_Array[2 * n + 13] = (crc >> 8) & 0x00FF;
 
 	Packet_Return = 0;
-	transmitInstructionPacket6();
+	transmitInstructionPacket4();
 }
 
 void SyncWrite_EnableDynamixels(uint8_t n, uint8_t *ID_list) {
@@ -771,7 +771,7 @@ void SyncWrite_EnableDynamixels(uint8_t n, uint8_t *ID_list) {
 	Instruction_Packet_Array[2 * n + 13] = (crc >> 8) & 0x00FF;
 
 	Packet_Return = 0;
-	transmitInstructionPacket6();
+	transmitInstructionPacket4();
 }
 
 void SyncWrite_StatusReturnLevel(uint8_t n, uint8_t *ID_list, uint8_t level) {
