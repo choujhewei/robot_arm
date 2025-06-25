@@ -57,7 +57,7 @@ _Bool start_trans_mx = 0;
 
 // Geometric parameters
 float a = 110;
-//float b = 160;
+float b = 160;
 //float c = 200;
 //float d = 180;
 //float e = 300;
@@ -65,6 +65,9 @@ float a = 110;
 //int32_t In[6] = {110, 160, 200, 180, 300, 180};
 //int32_t An[2] = {100,200};
 //int32_t vel[6] = {100};
+int32_t vel = 200;
+int32_t cmd[3] = {0,1136,1137};
+int32_t cmd2[3] = {0,2272,2273};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -136,18 +139,27 @@ int main(void)
   SyncWrite_StatusReturnLevel(2, ID_list, 1);
   LL_mDelay(10);
 //  PING(1);
-  SyncWrite_DisableDynamixels(2, ID_list);
+  for (int i = 0;i <= 10; i++){
+  	  SyncWrite_DisableDynamixels(2, ID_list);
+    }
 
   for(int id = 1; id <= 2; id++) {
-	  TorqueEnable(id,1);
-	  while (dynamixel_Ready != 1);
-      LL_mDelay(1);
-  }
+  	  TorqueEnable(id,0);
+  	  while (dynamixel_Ready != 1);
+        LL_mDelay(1);
+    }
 
-  for(int id = 1; id <= 2; id++) {
-      OperatingMode(id, POSITION);
-      LL_mDelay(1);
-      }
+    for(int id = 1; id <= 2; id++) {
+        OperatingMode(id, POSITION);
+        while (dynamixel_Ready != 1);
+        LL_mDelay(1);
+    }
+
+    for(int id = 1; id <= 2; id++) {
+  	  TorqueEnable(id,1);
+  	  while (dynamixel_Ready != 1);
+        LL_mDelay(1);
+    }
 //
 //  for(int id = 3; id < 9; id++) {
 //      TorqueEnable(1, 1);
@@ -163,10 +175,20 @@ int main(void)
 		LL_mDelay(100);
 		SyncLED_Disable(2, ID_list);
 		LL_mDelay(100);
-		for(a=110; a>=20;a-=90){
-			PositionWithVelocity(1,a/0.088,100);
-			LL_mDelay(1000);
-				}
+		SyncWrite_VelocityProfile(2, ID_list, 100);
+		SyncWrite_Position(2, ID_list, cmd);
+		LL_mDelay(1000);
+		SyncWrite_VelocityProfile(2, ID_list, 100);
+		SyncWrite_Position(2, ID_list, cmd2);
+		LL_mDelay(1000);
+		SyncWrite_PositionWithVelocityProfile(2, ID_list, cmd, vel);
+		LL_mDelay(1000);
+		SyncWrite_PositionWithVelocityProfile(2, ID_list, cmd2, vel);
+		LL_mDelay(1000);
+//		for(a=110; a>=20;a-=90){
+//			PositionWithVelocity(3,a/0.088,100);
+//			LL_mDelay(1000);
+//				}
 //		for(b=160; b<=240;b+=80){
 //			PositionWithVelocity(4,b/0.088,100);
 //			LL_mDelay(1000);

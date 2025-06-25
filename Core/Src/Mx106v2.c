@@ -255,8 +255,8 @@ uint8_t Reboot(uint8_t ID) {
 
     // 發送封包
     Packet_Return = 1;              // 要等回 ACK
-    transmitInstructionPacket6();
-    readStatusPacket6();             // 阻塞讀取回應
+    transmitInstructionPacket4();
+    readStatusPacket4();             // 阻塞讀取回應
 
     // 回傳錯誤碼：Status_Packet_Array[8] = ERR
     return Status_Packet_Array[8];
@@ -287,8 +287,8 @@ uint8_t OperatingMode(uint8_t ID, uint8_t OPERATION_MODE) {
 	}
 	else {
 		Packet_Return = 1;
-		  transmitInstructionPacket6();
-		  readStatusPacket6();
+		  transmitInstructionPacket4();
+		  readStatusPacket4();
 		   if (Status_Packet_Array[8] != 0) {
 		      // EEPROM 寫入失敗，直接回傳錯誤
 		      return (Status_Packet_Array[8] | 0xF000);
@@ -324,7 +324,7 @@ void Read_Operating_Mode(uint8_t ID) {
 	Packet_Return = 1;
 	Is_dynamixel_GetData = 0;
 
-	transmitInstructionPacket6();
+	transmitInstructionPacket4();
 	Parse_Status_Errors(Status_Packet_Array[8]);
 	printf("ReadBack Mode = %u\n", Status_Packet_Array[9]);
 }
@@ -392,13 +392,13 @@ uint8_t StatusReturnLevel(uint8_t ID, uint8_t level) {
 
 	if(ID == 0XFE || Status_Return_Level != ALL) {
 		Packet_Return = 0;
-		transmitInstructionPacket6();
+		transmitInstructionPacket4();
 		return (0x00);
 	}
 	else {
 		Packet_Return = 1;
-		transmitInstructionPacket6();
-		readStatusPacket6();
+		transmitInstructionPacket4();
+		readStatusPacket4();
 		if(Status_Packet_Array[8] == 0)
 			return (0x00);
 		else
@@ -430,13 +430,13 @@ uint8_t Velocity_PI(uint8_t ID, uint16_t P, uint16_t I) {
 
 	if(ID == 0XFE || Status_Return_Level != ALL) {
 		Packet_Return = 0;
-		transmitInstructionPacket6();
+		transmitInstructionPacket4();
 		return (0x00);
 	}
 	else {
 		Packet_Return = 1;
-		transmitInstructionPacket6();
-		readStatusPacket6();
+		transmitInstructionPacket4();
+		readStatusPacket4();
 		if(Status_Packet_Array[8] == 0)
 			return (0x00);
 		else
@@ -469,13 +469,13 @@ uint8_t Position_PID(uint8_t ID, uint16_t P, uint16_t I, uint16_t D) {
 
 	if(ID == 0XFE || Status_Return_Level != ALL) {
 		Packet_Return = 0;
-		transmitInstructionPacket6();
+		transmitInstructionPacket4();
 		return (0x00);
 	}
 	else {
 		Packet_Return = 1;
-		transmitInstructionPacket6();
-		readStatusPacket6();
+		transmitInstructionPacket4();
+		readStatusPacket4();
 		if(Status_Packet_Array[8] == 0)
 			return (0x00);
 		else
@@ -510,13 +510,13 @@ uint8_t Velocity(uint8_t ID, int32_t Speed) {
 
 	if(ID == 0XFE || Status_Return_Level != ALL) {
 		Packet_Return = 0;
-		transmitInstructionPacket6();
+		transmitInstructionPacket4();
 		return (0x00);
 	}
 	else {
 		Packet_Return = 1;
-		transmitInstructionPacket6();
-		readStatusPacket6();
+		transmitInstructionPacket4();
+		readStatusPacket4();
 		if(Status_Packet_Array[8] == 0)
 			return (0x00);
 		else
@@ -592,12 +592,12 @@ uint8_t Position(uint8_t ID, int32_t position) {
 
 	if(ID == 0XFE || Status_Return_Level != ALL) {
 		Packet_Return = 0;
-		transmitInstructionPacket6();
+		transmitInstructionPacket4();
 		return (0x00);
 	}
 	else {
 		Packet_Return = 1;
-		transmitInstructionPacket6();
+		transmitInstructionPacket4();
 		readStatusPacket6();
 		if(Status_Packet_Array[8] == 0)
 			return (0x00);
@@ -629,8 +629,8 @@ int32_t ReadPosition(uint8_t ID) {
 
 	Status_packet_length = 11; // ID(1) + LEN(2) + INS(1) + ERR(1) + PARA(4) + CRC(2)
 	Packet_Return = 1;
-	transmitInstructionPacket6();
-	readStatusPacket6();
+	transmitInstructionPacket4();
+	readStatusPacket4();
 
 	if(Status_Packet_Array[8] == 0) {               // If there is no status packet error return value
 		return (Status_Packet_Array[12] << 24 | Status_Packet_Array[11] << 16 | Status_Packet_Array[10] << 8 | Status_Packet_Array[9]); // Return present position value
@@ -658,8 +658,8 @@ uint8_t Read_TorqueEnable(uint8_t ID) {
     Status_packet_length = 8; // 固定回傳：ID(1)+Len(2)+Ins(1)+Err(1)+Param(1)+CRC(2)
 
     Packet_Return = 1;
-    transmitInstructionPacket6();
-    readStatusPacket6();
+    transmitInstructionPacket4();
+    readStatusPacket4();
 
     if (Status_Packet_Array[8] == 0) // no error
         return Status_Packet_Array[9]; // return the param (TorqueEnable)
@@ -722,7 +722,7 @@ void SyncRead_Position(uint8_t n, uint8_t *ID_list) {
 	Packet_Return = n;
 	Is_dynamixel_GetData = 0;
 
-	transmitInstructionPacket6();
+	transmitInstructionPacket4();
 }
 
 void SyncWrite_DisableDynamixels(uint8_t n, uint8_t *ID_list) {
@@ -829,7 +829,7 @@ void SyncWrite_Velocity(uint8_t n, uint8_t *ID_list, int32_t *cmd) {
 	Instruction_Packet_Array[5 * n + 13] = (crc >> 8) & 0x00FF;
 
 	Packet_Return = 0;
-	transmitInstructionPacket6();
+	transmitInstructionPacket4();
 }
 
 void SyncWrite_VelocityProfile(uint8_t n, uint8_t *ID_list, int32_t vel_profile) {
@@ -857,7 +857,7 @@ void SyncWrite_VelocityProfile(uint8_t n, uint8_t *ID_list, int32_t vel_profile)
 	Instruction_Packet_Array[5 * n + 13] = (crc >> 8) & 0x00FF;
 
 	Packet_Return = 0;
-	transmitInstructionPacket6();
+	transmitInstructionPacket4();
 }
 
 void SyncWrite_Position(uint8_t n, uint8_t *ID_list, int32_t *cmd) {
@@ -885,7 +885,7 @@ void SyncWrite_Position(uint8_t n, uint8_t *ID_list, int32_t *cmd) {
 	Instruction_Packet_Array[5 * n + 13] = (crc >> 8) & 0x00FF;
 
 	Packet_Return = 0;
-	transmitInstructionPacket6();
+	transmitInstructionPacket4();
 }
 
 void SyncWrite_PositionWithVelocityProfile(uint8_t n, uint8_t *ID_list, int32_t *cmd, int32_t vel_profile) {
@@ -917,7 +917,7 @@ void SyncWrite_PositionWithVelocityProfile(uint8_t n, uint8_t *ID_list, int32_t 
 	Instruction_Packet_Array[9 * n + 13] = (crc >> 8) & 0x00FF;
 
 	Packet_Return = 0;
-	transmitInstructionPacket6();
+	transmitInstructionPacket4();
 }
 
 void SyncLED_Disable(uint8_t n, uint8_t *ID_list) {
