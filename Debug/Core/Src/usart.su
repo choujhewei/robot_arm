@@ -17,5 +17,7 @@
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:410:22:LL_USART_Enable	16	static
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:1479:22:LL_USART_ConfigAsyncMode	16	static
 ../Core/Src/usart.c:28:6:MX_UART4_Init	64	static
-../Core/Src/usart.c:119:6:MX_USART2_UART_Init	64	static
-../Core/Src/usart.c:206:6:MX_USART6_UART_Init	64	static
+../Core/Src/usart.c:118:6:MX_UART5_Init	64	static
+../Core/Src/usart.c:178:6:MX_USART2_UART_Init	64	static
+../Core/Src/usart.c:265:6:MX_USART3_UART_Init	64	static
+../Core/Src/usart.c:325:6:MX_USART6_UART_Init	64	static

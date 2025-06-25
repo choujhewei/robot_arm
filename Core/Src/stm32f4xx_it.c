@@ -56,6 +56,14 @@
 /* USER CODE BEGIN 0 */
 uint8_t tx_data[] = {0xFF, 0xFF, 0x01, 0x03, 0x02, 0x1E, 0x20, 0x00, 0xD5}; // 根據你的 Instruction Packet 自訂
 uint8_t packet_count = 0;
+volatile uint8_t rx_data;
+volatile uint16_t rx_index = 0;
+char rx_buffer[RX_BUFFER_SIZE];
+volatile uint8_t data_ready = 0;
+
+uint8_t uart5_rx_buffer[PACKET_SIZE];
+volatile uint8_t uart5_rx_index = 0;
+volatile uint8_t uart5_packet_ready = 0;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -305,6 +313,34 @@ void TIM1_UP_TIM10_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles USART3 global interrupt.
+  */
+void USART3_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART3_IRQn 0 */
+
+  /* USER CODE END USART3_IRQn 0 */
+  /* USER CODE BEGIN USART3_IRQn 1 */
+	if (LL_USART_IsActiveFlag_RXNE(USART3) && LL_USART_IsEnabledIT_RXNE(USART3))
+	{
+		rx_data = LL_USART_ReceiveData8(USART3);
+
+		// 檢查是否資料結束（這裡用 ! 當作結尾）
+		if (rx_data == '!' || rx_index >= RX_BUFFER_SIZE - 1)
+		{
+		    rx_buffer[rx_index] = '\0';  // 加上結尾字元
+		    rx_index = 0;
+		    data_ready = 1;  // 設定資料完成旗標
+		}
+		else
+		{
+		    rx_buffer[rx_index++] = rx_data;
+		}
+	}
+  /* USER CODE END USART3_IRQn 1 */
+}
+
+/**
   * @brief This function handles UART4 global interrupt.
   */
 void UART4_IRQHandler(void)
@@ -343,6 +379,26 @@ void UART4_IRQHandler(void)
   /* USER CODE BEGIN UART4_IRQn 1 */
 
   /* USER CODE END UART4_IRQn 1 */
+}
+
+/**
+  * @brief This function handles UART5 global interrupt.
+  */
+void UART5_IRQHandler(void)
+{
+  /* USER CODE BEGIN UART5_IRQn 0 */
+
+  /* USER CODE END UART5_IRQn 0 */
+  /* USER CODE BEGIN UART5_IRQn 1 */
+	if (LL_USART_IsActiveFlag_RXNE(UART5) && LL_USART_IsEnabledIT_RXNE(UART5)) {
+	    uint8_t byte = LL_USART_ReceiveData8(UART5);
+	    uart5_rx_buffer[uart5_rx_index++] = byte;
+	}
+	if (uart5_rx_index >= PACKET_SIZE) {
+	   uart5_rx_index = 0;
+	   uart5_packet_ready = 1;
+	}
+  /* USER CODE END UART5_IRQn 1 */
 }
 
 /**

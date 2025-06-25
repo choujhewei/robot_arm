@@ -33,6 +33,8 @@
 #include "Mx106v2_CRC.h"
 #include "stm32f4xx_it.h"
 #include "motor_control.h"
+#include "ROS2STM.h"
+#include "ps4_parser.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -66,7 +68,7 @@ float b = 160;
 //int32_t An[2] = {100,200};
 //int32_t vel[6] = {100};
 int32_t vel = 200;
-int32_t cmd[3] = {0,1136,1137};
+int32_t cmd[7] = {0,200.74/0.088,206.63/0.088,184.13/0.088,159.43/0.088,178.95/0.088,300};
 int32_t cmd2[3] = {0,2272,2273};
 /* USER CODE END PV */
 
@@ -89,7 +91,9 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3);
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -121,6 +125,8 @@ int main(void)
   MX_TIM1_Init();
   MX_UART4_Init();
   MX_USART6_UART_Init();
+  MX_UART5_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   LL_TIM_ClearFlag_UPDATE(TIM1);
   LL_TIM_EnableIT_UPDATE(TIM1);
@@ -129,143 +135,79 @@ int main(void)
   LL_mDelay(1); // ★ 加入延遲穩定方向切換（必要！）
   uart4_dma_tx_start();
   usart6_dma_tx_start();
+  LL_USART_EnableIT_RXNE(USART3);
+  LL_USART_Enable(USART3);
+  LL_USART_EnableIT_RXNE(UART5);
+  LL_USART_Enable(UART5);
+  NVIC_SetPriority(USART3_IRQn, 0);
+  NVIC_EnableIRQ(USART3_IRQn);
+  NVIC_SetPriority(UART5_IRQn, 0);
+  NVIC_EnableIRQ(UART5_IRQn);
   printf("start\r\n");
   LL_mDelay(100);
   UART4_DMA_Config();
   USART6_DMA_Config();
   LL_USART_Enable(UART4);
   LL_USART_Enable(USART6);
-  uint8_t ID_list[2] = { 1, 2 };
-  SyncWrite_StatusReturnLevel(2, ID_list, 1);
+  uint8_t ID_list[6] = { 1, 2, 3, 4, 5, 6 };
+  SyncWrite_StatusReturnLevel(6, ID_list, 1);
   LL_mDelay(10);
 //  PING(1);
   for (int i = 0;i <= 10; i++){
-  	  SyncWrite_DisableDynamixels(2, ID_list);
+  	  SyncWrite_DisableDynamixels(6, ID_list);
     }
 
-  for(int id = 1; id <= 2; id++) {
+  for(int id = 1; id <= 6; id++) {
   	  TorqueEnable(id,0);
   	  while (dynamixel_Ready != 1);
         LL_mDelay(1);
     }
 
-    for(int id = 1; id <= 2; id++) {
+    for(int id = 1; id <= 6; id++) {
         OperatingMode(id, POSITION);
         while (dynamixel_Ready != 1);
         LL_mDelay(1);
     }
 
-    for(int id = 1; id <= 2; id++) {
+    for(int id = 1; id <= 6; id++) {
   	  TorqueEnable(id,1);
   	  while (dynamixel_Ready != 1);
         LL_mDelay(1);
     }
-//
-//  for(int id = 3; id < 9; id++) {
-//      TorqueEnable(1, 1);
-//      LL_mDelay(1);
-//      }
-//
-  SyncWrite_EnableDynamixels(2, ID_list);
+  SyncWrite_EnableDynamixels(6, ID_list);
   LL_mDelay(1);
-//  PING(1);
 
 	while(1){
-		SyncLED_Enable(2, ID_list);
-		LL_mDelay(100);
-		SyncLED_Disable(2, ID_list);
-		LL_mDelay(100);
-		SyncWrite_VelocityProfile(2, ID_list, 100);
-		SyncWrite_Position(2, ID_list, cmd);
-		LL_mDelay(1000);
-		SyncWrite_VelocityProfile(2, ID_list, 100);
-		SyncWrite_Position(2, ID_list, cmd2);
-		LL_mDelay(1000);
-		SyncWrite_PositionWithVelocityProfile(2, ID_list, cmd, vel);
-		LL_mDelay(1000);
-		SyncWrite_PositionWithVelocityProfile(2, ID_list, cmd2, vel);
-		LL_mDelay(1000);
-//		for(a=110; a>=20;a-=90){
-//			PositionWithVelocity(3,a/0.088,100);
-//			LL_mDelay(1000);
-//				}
-//		for(b=160; b<=240;b+=80){
-//			PositionWithVelocity(4,b/0.088,100);
-//			LL_mDelay(1000);
-//				}
-//		for(c=190; c<=220;c+=30){
-//			PositionWithVelocity(5,c/0.088,100);
-//			LL_mDelay(1000);
-//				}
-//		for(d=180; d<=330;d+=150){
-//			PositionWithVelocity(6,d/0.088,100);
-//			LL_mDelay(1000);
-//				}
-//		for(e=250; e<=310;e+=60){
-//			PositionWithVelocity(7,e/0.088,100);
-//			LL_mDelay(1000);
-//				}
-//		for(f=180; f>=0;f-=180){
-//			PositionWithVelocity(8,f/0.088,100);
-//			LL_mDelay(1000);
-//				}
-//		for(a=20; a<=110;a+=90){
-//			PositionWithVelocity(3,a/0.088,100);
-//			LL_mDelay(1000);
-//				}
-//		for(b=240; b>=160;b-=80){
-//			PositionWithVelocity(4,b/0.088,100);
-//			LL_mDelay(1000);
-//				}
-//		for(c=220; c>=190;c-=30){
-//			PositionWithVelocity(5,c/0.088,100);
-//			LL_mDelay(1000);
-//				}
-//		for(d=330; d>=180;d-=150){
-//			PositionWithVelocity(6,d/0.088,100);
-//			LL_mDelay(1000);
-//				}
-//		for(e=310; e>=250;e-=60){
-//			PositionWithVelocity(7,e/0.088,100);
-//			LL_mDelay(1000);
-//				}
-//		for(f=0; f<=180;f+=180){
-//			PositionWithVelocity(8,f/0.088,100);
-//			LL_mDelay(1000);
-//				}
-//		SyncWrite_PositionWithVelocityProfile(6, ID_list, In[6], vel[6]);
-
+		loop_check_uart5(uart5_rx_buffer, &uart5_packet_ready);
+		if (data_ready)
+		{
+			data_ready = 0;
+			printf("interrupt\r\n");
+			parse_and_control((char *)rx_buffer);  // 呼叫解析與控制函數
+		}
+//		SyncLED_Enable(2, ID_list);
+//		LL_mDelay(100);
+//		SyncLED_Disable(2, ID_list);
+//		LL_mDelay(100);
+//		SyncWrite_VelocityProfile(2, ID_list, 100);
+//		SyncWrite_Position(2, ID_list, cmd);
+//		LL_mDelay(1000);
+//		SyncWrite_VelocityProfile(2, ID_list, 100);
+//		SyncWrite_Position(2, ID_list, cmd2);
+//		LL_mDelay(1000);
+//		SyncWrite_PositionWithVelocityProfile(6, ID_list, cmd, vel);
+//		LL_mDelay(1000);
+//		SyncWrite_PositionWithVelocityProfile(2, ID_list, cmd2, vel);
+//		LL_mDelay(1000);
 	}
-//	PING();
-//	SyncRead_Position(2, ID_list);
-//	SyncWrite_StatusReturnLevel(2, ID_list, 1);
 
-//	uint8_t ID_list[1] = { 1 };
-//	SyncWrite_StatusReturnLevel(1, ID_list, 1);
-//	printf("SyncWrite\r\n");
-//	LL_mDelay(100);
-//	SyncRead_Position(1, ID_list);
-//	USART6_DMA_Config();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 //  while (1)
 //  {
-//	  	if(start_trans_mx == 1) {
-////	  		LL_mDelay(1000);
-//	  		start_trans_mx = 0;
-////	  		printf("start_tran\r\n");
-////	  		LL_mDelay(100);
-//	  		uint8_t ID_list[2] = { 1,2 };
-//	  		SyncRead_Position(2, ID_list); // Transmit Instruction Packet to MX106 through DMA1_stream4
-//	  	}
-//
-//	  	if(Is_dynamixel_GetData == 1) { // changed in DMA1_stream2_IRQHandler after finishing receiving data-packet from MX106
-//	  		Is_dynamixel_GetData = 0;
-//	  		printf("Is_dynamixel_GetData\r\n");
-//	  		main_function();
-//	  	}
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

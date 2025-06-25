@@ -1,0 +1,4 @@
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:1814:26:uint32_t LL_USART_IsActiveFlag_TXE(const USART_TypeDef*)	16	static
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usart.h:2426:22:void LL_USART_TransmitData8(USART_TypeDef*, uint8_t)	16	static
+../Core/Src/ps4_parser.cpp:12:6:void process_ps4_packet(uint8_t*)	120	static
+../Core/Src/ps4_parser.cpp:31:6:void loop_check_uart5(uint8_t*, volatile uint8_t*)	16	static
