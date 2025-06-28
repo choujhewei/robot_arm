@@ -72,7 +72,7 @@ void parse_and_control(char *input) {
 //               hand,
 //               ID_list[0], ID_list[1], ID_list[2], ID_list[3], ID_list[4], ID_list[5],
 //               cmd[0], cmd[1], cmd[2], cmd[3], cmd[4]);
-        int32_t vel = 30;
+        int32_t vel = 5;
         SyncWrite_PositionWithVelocityProfile(6, ID_list, cmd_mod, vel);
     }
 }

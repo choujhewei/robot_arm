@@ -94,6 +94,7 @@ int main(void)
 	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3);
 	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
 	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
+	LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_4);
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -131,60 +132,61 @@ int main(void)
   LL_TIM_ClearFlag_UPDATE(TIM1);
   LL_TIM_EnableIT_UPDATE(TIM1);
   LL_TIM_EnableCounter(TIM1);
-  LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_4);
-  LL_mDelay(1); // ★ 加入延遲穩定方向切換（必要！）
-  uart4_dma_tx_start();
-  usart6_dma_tx_start();
-  LL_USART_EnableIT_RXNE(USART3);
-  LL_USART_Enable(USART3);
-  LL_USART_EnableIT_RXNE(UART5);
-  LL_USART_Enable(UART5);
-  NVIC_SetPriority(USART3_IRQn, 0);
-  NVIC_EnableIRQ(USART3_IRQn);
-  NVIC_SetPriority(UART5_IRQn, 0);
-  NVIC_EnableIRQ(UART5_IRQn);
-  printf("start\r\n");
-  LL_mDelay(100);
-  UART4_DMA_Config();
-  USART6_DMA_Config();
-  LL_USART_Enable(UART4);
-  LL_USART_Enable(USART6);
-  uint8_t ID_list[6] = { 1, 2, 3, 4, 5, 6 };
-  SyncWrite_StatusReturnLevel(6, ID_list, 1);
-  LL_mDelay(10);
-//  PING(1);
-  for (int i = 0;i <= 10; i++){
-  	  SyncWrite_DisableDynamixels(6, ID_list);
-    }
+//  LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_4);
+//  LL_mDelay(1); // ★ 加入延遲穩定方向切換（必要！）
+//  uart4_dma_tx_start();
+//  usart6_dma_tx_start();
+//  LL_USART_EnableIT_RXNE(USART3);
+//  LL_USART_Enable(USART3);
+//  LL_USART_EnableIT_RXNE(UART5);
+//  LL_USART_Enable(UART5);
+//  NVIC_SetPriority(USART3_IRQn, 0);
+//  NVIC_EnableIRQ(USART3_IRQn);
+//  NVIC_SetPriority(UART5_IRQn, 0);
+//  NVIC_EnableIRQ(UART5_IRQn);
+//  printf("start\r\n");
+//  LL_mDelay(100);
+//  UART4_DMA_Config();
+//  USART6_DMA_Config();
+//  LL_USART_Enable(UART4);
+//  LL_USART_Enable(USART6);
+//  uint8_t ID_list[6] = { 1, 2, 3, 4, 5, 6 };
+//  SyncWrite_StatusReturnLevel(6, ID_list, 1);
+//  LL_mDelay(10);
+////  PING(1);
+//  for (int i = 0;i <= 10; i++){
+//  	  SyncWrite_DisableDynamixels(6, ID_list);
+//    }
+//
+//  for(int id = 1; id <= 6; id++) {
+//  	  TorqueEnable(id,0);
+//  	  while (dynamixel_Ready != 1);
+//        LL_mDelay(1);
+//    }
+//
+//    for(int id = 1; id <= 6; id++) {
+//        OperatingMode(id, POSITION);
+//        while (dynamixel_Ready != 1);
+//        LL_mDelay(1);
+//    }
+//
+//    for(int id = 1; id <= 6; id++) {
+//  	  TorqueEnable(id,1);
+//  	  while (dynamixel_Ready != 1);
+//        LL_mDelay(1);
+//    }
+//  SyncWrite_EnableDynamixels(6, ID_list);
+//  LL_mDelay(1);
 
-  for(int id = 1; id <= 6; id++) {
-  	  TorqueEnable(id,0);
-  	  while (dynamixel_Ready != 1);
-        LL_mDelay(1);
-    }
-
-    for(int id = 1; id <= 6; id++) {
-        OperatingMode(id, POSITION);
-        while (dynamixel_Ready != 1);
-        LL_mDelay(1);
-    }
-
-    for(int id = 1; id <= 6; id++) {
-  	  TorqueEnable(id,1);
-  	  while (dynamixel_Ready != 1);
-        LL_mDelay(1);
-    }
-  SyncWrite_EnableDynamixels(6, ID_list);
-  LL_mDelay(1);
-
-	while(1){
-		loop_check_uart5(uart5_rx_buffer, &uart5_packet_ready);
-		if (data_ready)
-		{
-			data_ready = 0;
-			printf("interrupt\r\n");
-			parse_and_control((char *)rx_buffer);  // 呼叫解析與控制函數
-		}
+//	while(1){
+//		loop_check_uart5(uart5_rx_buffer, &uart5_packet_ready);
+//		if (data_ready)
+//		{
+//			data_ready = 0;
+//			printf("interrupt\r\n");
+//			parse_and_control((char *)rx_buffer);  // 呼叫解析與控制函數
+//		}
+//		Velocity(1, 5);
 //		SyncLED_Enable(2, ID_list);
 //		LL_mDelay(100);
 //		SyncLED_Disable(2, ID_list);
@@ -199,19 +201,24 @@ int main(void)
 //		LL_mDelay(1000);
 //		SyncWrite_PositionWithVelocityProfile(2, ID_list, cmd2, vel);
 //		LL_mDelay(1000);
-	}
-
+//	}
+  StatusReturnLevel(1, 1);  // 只設 ID 1 → 這樣你可以加 while 等回應
+  while (dynamixel_Ready != 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-//  while (1)
-//  {
+  while (1)
+  {
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//  }
+	int32_t pos = ReadPosition(1);
+	float deg = pos * 0.087891f;
+	int deg_x100 = (int)(deg * 100);  // 乘 100 轉成整數
+	printf("Angle ≈ %d.%02d°\r\n", deg_x100 / 100, deg_x100 % 100);
+  }
   /* USER CODE END 3 */
 }
 

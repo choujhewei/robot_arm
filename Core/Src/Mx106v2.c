@@ -206,12 +206,21 @@ void transmitInstructionPacket6(void) {  // Transmit instruction packet to Dynam
 }
 
 void readStatusPacket4(void) {
+	// 清空 RX buffer（保險）
+	while (LL_USART_IsActiveFlag_RXNE(UART4)) {
+	    (void)LL_USART_ReceiveData8(UART4);  // 清空舊資料，避免警告
+	}
 	for(uint8_t i = 0; i < Status_packet_length + 4; i++) {
 		while(LL_USART_IsActiveFlag_RXNE(UART4) == RESET) {
 		}
 		printf("read\r\n");
 		Status_Packet_Array[i] = LL_USART_ReceiveData8(UART4);
 	}
+	printf(".RX Packet: ");
+	for (int i = 0; i < Status_packet_length + 4; i++) {
+	    printf("%02X ", Status_Packet_Array[i]);
+	}
+	printf("\r\n");
 	dynamixel_Ready = 1;
 }
 

@@ -247,13 +247,15 @@ void DMA1_Stream4_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Stream4_IRQn 0 */
 	if(LL_DMA_IsActiveFlag_TC4(DMA1) == 1) {
-		    printf("DMA TX Complete\r\n");
-			LL_DMA_ClearFlag_TC4(DMA1);
-			LL_DMA_DisableStream(DMA1, LL_DMA_STREAM_4);
-			LL_USART_DisableDMAReq_TX(UART4);
-			uart4_dma_rx_start();
-			dynamixel_Ready = 1;
-		}
+		printf("DMA TX Complete\r\n");
+		LL_DMA_ClearFlag_TC4(DMA1);
+		LL_DMA_DisableStream(DMA1, LL_DMA_STREAM_4);
+		LL_USART_DisableDMAReq_TX(UART4);
+		while (!LL_USART_IsActiveFlag_TC(UART4));
+		LL_USART_ClearFlag_TC(UART4);
+		LL_USART_EnableIT_TC(UART4);
+		dynamixel_Ready = 1;
+	}
   /* USER CODE END DMA1_Stream4_IRQn 0 */
   /* USER CODE BEGIN DMA1_Stream4_IRQn 1 */
 
@@ -269,8 +271,6 @@ void DMA1_Stream5_IRQHandler(void)
 	if(LL_DMA_IsActiveFlag_TC5(DMA1) == 1) {
 			LL_DMA_ClearFlag_TC5(DMA1);
 			LL_DMA_DisableStream(DMA1, LL_DMA_STREAM_5);
-
-
 		}
   /* USER CODE END DMA1_Stream5_IRQn 0 */
   /* USER CODE BEGIN DMA1_Stream5_IRQn 1 */
@@ -358,23 +358,24 @@ void UART4_IRQHandler(void)
 	#else
 	    LL_USART_SetTransferDirection(UART4, LL_USART_DIRECTION_RX); //change UART direction
 	#endif
+	    uart4_dma_rx_start();
 		if(Packet_Return == 0) {
 			dynamixel_Ready = 1;
 			return;
 		}
-//				else if(Packet_Return == 1) {
-//					dynamixel_Ready = 2;
-//					return;
-//				}
-//				else {
-//					printf("Packet_Return \r\n");
-//					dynamixel_Ready = 2;
-//
-//					LL_DMA_SetDataLength(DMA1, LL_DMA_STREAM_2, Status_packet_length + 4);
-//					LL_DMA_EnableStream(DMA1, LL_DMA_STREAM_2);
-//					LL_USART_EnableDMAReq_RX(UART4);
-//				}
-			}
+		else if(Packet_Return == 1) {
+			dynamixel_Ready = 2;
+			return;
+		}
+		else {
+			printf("Packet_Return \r\n");
+			dynamixel_Ready = 2;
+
+			LL_DMA_SetDataLength(DMA1, LL_DMA_STREAM_2, Status_packet_length + 4);
+			LL_DMA_EnableStream(DMA1, LL_DMA_STREAM_2);
+			LL_USART_EnableDMAReq_RX(UART4);
+		}
+	}
   /* USER CODE END UART4_IRQn 0 */
   /* USER CODE BEGIN UART4_IRQn 1 */
 
